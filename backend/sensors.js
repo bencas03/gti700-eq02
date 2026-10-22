@@ -9,7 +9,8 @@ function formatTimestamp(date = new Date()) {
   const hh = String(date.getHours()).padStart(2, "0");
   const mi = String(date.getMinutes()).padStart(2, "0");
   const ss = String(date.getSeconds()).padStart(2, "0");
-  return `${yyyy}/${mm}/${dd} ${hh}:${mi}:${ss}`;
+  const mmm = String(date.getMilliseconds()).padStart(3, "0");
+  return `${yyyy}/${mm}/${dd} ${hh}:${mi}:${ss}.${mmm}`;
 }
 
 class SensorStore {

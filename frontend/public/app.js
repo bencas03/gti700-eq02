@@ -1,6 +1,6 @@
 const API_BASE = window.APP_CONFIG?.BACKEND_BASE_URL || "http://localhost:8080";
 const HISTORY_SIZE = 30;
-const REFRESH_MS = 3000;
+const REFRESH_MS = 300;
 
 const statusEl = document.getElementById("status");
 const soundCurrentEl = document.getElementById("sound-current");
@@ -92,18 +92,11 @@ function updateChart(chart, history) {
   chart.update();
 }
 
-async function getText(path) {
-  const response = await fetch(`${API_BASE}${path}`);
-  if (!response.ok) {
-    throw new Error(`${path} -> HTTP ${response.status}`);
-  }
-  return response.text();
-}
-
 async function getJson(path) {
   const response = await fetch(`${API_BASE}${path}`);
   if (!response.ok) {
-    throw new Error(`${path} -> HTTP ${response.status}`);
+    const message = await response.text();
+    throw new Error(`${path} -> HTTP ${response.status}${message ? ` - ${message}` : ""}`);
   }
   return response.json();
 }
@@ -111,39 +104,71 @@ async function getJson(path) {
 const soundChart = createChart("sound-chart", "Son (valeur brute)", "#2563eb");
 const ultrasonicChart = createChart("ultrasonic-chart", "Distance (cm)", "#059669");
 
-async function refreshAll() {
-  try {
-    const [
-      soundCurrent,
-      soundAvg,
-      soundHistory,
-      ultrasonicCurrent,
-      ultrasonicAvg,
-      ultrasonicHistory
-    ] = await Promise.all([
-      getText("/capteurs/sound"),
-      getText(`/capteurs/sound/${HISTORY_SIZE}/moy`),
-      getJson(`/capteurs/sound/${HISTORY_SIZE}`),
-      getText("/capteurs/ultrasonic"),
-      getText(`/capteurs/ultrasonic/${HISTORY_SIZE}/moy`),
-      getJson(`/capteurs/ultrasonic/${HISTORY_SIZE}`)
-    ]);
-
-    soundCurrentEl.textContent = soundCurrent;
-    soundAvgEl.textContent = soundAvg;
-    ultrasonicCurrentEl.textContent = `${ultrasonicCurrent} cm`;
-    ultrasonicAvgEl.textContent = `${ultrasonicAvg} cm`;
-
-    renderTable(soundHistoryBody, soundHistory, "");
-    renderTable(ultrasonicHistoryBody, ultrasonicHistory, " cm");
-
-    updateChart(soundChart, soundHistory);
-    updateChart(ultrasonicChart, ultrasonicHistory);
-    setStatusOk();
-  } catch (err) {
-    setStatusError(err.message);
+function computeAverage(history) {
+  if (history.length === 0) {
+    return null;
   }
+  const total = history.reduce((sum, [, value]) => sum + Number(value), 0);
+  return (total / history.length).toFixed(1);
+}
+
+async function refreshSensor({
+  key,
+  currentEl,
+  avgEl,
+  historyEl,
+  chart,
+  unitSuffix
+}) {
+  const history = await getJson(`/capteurs/${key}/${HISTORY_SIZE}`);
+  renderTable(historyEl, history, unitSuffix);
+  updateChart(chart, history);
+
+  if (history.length === 0) {
+    currentEl.textContent = "--";
+    avgEl.textContent = "--";
+    return;
+  }
+
+  const latestValue = Number(history[history.length - 1][1]).toFixed(1);
+  const avg = computeAverage(history);
+  currentEl.textContent = `${latestValue}${unitSuffix}`;
+  avgEl.textContent = `${avg}${unitSuffix}`;
+}
+
+async function refreshAll() {
+  const results = await Promise.allSettled([
+    refreshSensor({
+      key: "sound",
+      currentEl: soundCurrentEl,
+      avgEl: soundAvgEl,
+      historyEl: soundHistoryBody,
+      chart: soundChart,
+      unitSuffix: ""
+    }),
+    refreshSensor({
+      key: "ultrasonic",
+      currentEl: ultrasonicCurrentEl,
+      avgEl: ultrasonicAvgEl,
+      historyEl: ultrasonicHistoryBody,
+      chart: ultrasonicChart,
+      unitSuffix: " cm"
+    })
+  ]);
+
+  const failures = results.filter((result) => result.status === "rejected");
+  if (failures.length === 0) {
+    setStatusOk();
+    return;
+  }
+  if (failures.length < results.length) {
+    setStatusError("Un capteur est indisponible, l'autre continue de se rafraîchir.");
+    return;
+  }
+  setStatusError(failures[0].reason?.message || "Erreur inconnue.");
 }
 
 refreshAll();
-setInterval(refreshAll, REFRESH_MS);
+setInterval(() => {
+  refreshAll();
+}, REFRESH_MS);

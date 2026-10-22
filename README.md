@@ -81,6 +81,6 @@ Le frontend écoute sur `http://<ip_machine_b>:8889/affichage`.
 
 ## Notes
 
-- Rafraîchissement automatique toutes les 3 secondes sans recharger la page.
+- Rafraîchissement automatique rapide (polling) pour suivre chaque nouvelle mesure sans recharger la page.
 - En cas d'erreur réseau/backend, un message d'erreur est affiché et les tentatives continuent.
 - Librairie graphique utilisée: Chart.js (CDN officiel: https://www.chartjs.org/).
