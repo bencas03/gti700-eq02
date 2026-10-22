@@ -92,8 +92,8 @@ function parseSound(line) {
   return Number(match[1]);
 }
 
-function parseHumidity(line) {
-  const match = line.match(/humidity:\s*([+-]?\d+(?:\.\d+)?)\s*%/i);
+function parseUltrasonic(line) {
+  const match = line.match(/([+-]?\d+(?:\.\d+)?)\s*cm/i);
   if (!match) {
     return null;
   }
@@ -104,5 +104,5 @@ module.exports = {
   SensorStore,
   startSensorProcess,
   parseSound,
-  parseHumidity
+  parseUltrasonic
 };

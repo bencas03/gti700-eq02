@@ -4,7 +4,7 @@ const {
   SensorStore,
   startSensorProcess,
   parseSound,
-  parseHumidity
+  parseUltrasonic
 } = require("./sensors");
 
 const app = express();
@@ -13,11 +13,11 @@ const maxHistory = Number(process.env.MAX_HISTORY || 720);
 const pythonCmd = process.env.PYTHON_CMD || "python3";
 const soundScript =
   process.env.SOUND_SCRIPT || path.join(__dirname, "..", "python_examples", "sound.py");
-const humScript =
-  process.env.HUM_SCRIPT || path.join(__dirname, "..", "python_examples", "humid.py");
+const ultrasonicScript =
+  process.env.ULTRASONIC_SCRIPT || path.join(__dirname, "..", "python_examples", "ultrasonic.py");
 
 const soundStore = new SensorStore("sound", maxHistory);
-const humStore = new SensorStore("hum", maxHistory);
+const ultrasonicStore = new SensorStore("ultrasonic", maxHistory);
 
 const processes = [
   startSensorProcess({
@@ -27,9 +27,9 @@ const processes = [
     pythonCmd
   }),
   startSensorProcess({
-    scriptPath: humScript,
-    parser: parseHumidity,
-    store: humStore,
+    scriptPath: ultrasonicScript,
+    parser: parseUltrasonic,
+    store: ultrasonicStore,
     pythonCmd
   })
 ];
@@ -95,31 +95,31 @@ app.get("/capteurs/sound/:n/moy", (req, res) => {
   sendAverage(res, soundStore, n, false);
 });
 
-app.get("/capteurs/hum", (req, res) => {
-  sendLatest(res, humStore, true);
+app.get("/capteurs/ultrasonic", (req, res) => {
+  sendLatest(res, ultrasonicStore, false);
 });
 
-app.get("/capteurs/hum/:n", (req, res) => {
+app.get("/capteurs/ultrasonic/:n", (req, res) => {
   const n = parseN(req, res);
   if (n === null) {
     return;
   }
-  sendHistory(res, humStore, n);
+  sendHistory(res, ultrasonicStore, n);
 });
 
-app.get("/capteurs/hum/:n/moy", (req, res) => {
+app.get("/capteurs/ultrasonic/:n/moy", (req, res) => {
   const n = parseN(req, res);
   if (n === null) {
     return;
   }
-  sendAverage(res, humStore, n, true);
+  sendAverage(res, ultrasonicStore, n, false);
 });
 
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
     soundSamples: soundStore.values.length,
-    humiditySamples: humStore.values.length
+    ultrasonicSamples: ultrasonicStore.values.length
   });
 });
 

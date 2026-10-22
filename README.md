@@ -23,7 +23,7 @@ Implémentation simple séparée en deux dossiers:
 - Dépendances capteurs Python installées (RPi.GPIO, etc.)
 - Les scripts Python présents dans `python_examples/`:
   - `sound.py` (son)
-  - `humid.py` (humidité)
+  - `ultrasonic.py` (ultrasonique)
 
 ### Machine B (frontend, Raspberry Pi B / ordinateur B)
 - Node.js 18+
@@ -42,7 +42,7 @@ Variables optionnelles:
 - `PORT` (défaut: `8080`)
 - `PYTHON_CMD` (défaut: `python3`)
 - `SOUND_SCRIPT` (défaut: `../python_examples/sound.py`)
-- `HUM_SCRIPT` (défaut: `../python_examples/humid.py`)
+- `ULTRASONIC_SCRIPT` (défaut: `../python_examples/ultrasonic.py`)
 - `MAX_HISTORY` (défaut: `720`)
 
 Lancer:
@@ -55,9 +55,9 @@ API disponible sur `http://<ip_machine_a>:8080`:
 - `GET /capteurs/sound`
 - `GET /capteurs/sound/:n`
 - `GET /capteurs/sound/:n/moy`
-- `GET /capteurs/hum`
-- `GET /capteurs/hum/:n`
-- `GET /capteurs/hum/:n/moy`
+- `GET /capteurs/ultrasonic`
+- `GET /capteurs/ultrasonic/:n`
+- `GET /capteurs/ultrasonic/:n/moy`
 
 ## Démarrage du frontend (Machine B)
 

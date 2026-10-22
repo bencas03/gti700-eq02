@@ -5,10 +5,10 @@ const REFRESH_MS = 3000;
 const statusEl = document.getElementById("status");
 const soundCurrentEl = document.getElementById("sound-current");
 const soundAvgEl = document.getElementById("sound-avg");
-const humCurrentEl = document.getElementById("hum-current");
-const humAvgEl = document.getElementById("hum-avg");
+const ultrasonicCurrentEl = document.getElementById("ultrasonic-current");
+const ultrasonicAvgEl = document.getElementById("ultrasonic-avg");
 const soundHistoryBody = document.getElementById("sound-history");
-const humHistoryBody = document.getElementById("hum-history");
+const ultrasonicHistoryBody = document.getElementById("ultrasonic-history");
 
 function extractTime(timestamp) {
   const parts = timestamp.split(" ");
@@ -71,8 +71,24 @@ function createChart(canvasId, label, borderColor) {
 }
 
 function updateChart(chart, history) {
-  chart.data.labels = history.map(([timestamp]) => extractTime(timestamp));
-  chart.data.datasets[0].data = history.map(([, value]) => Number(value));
+  const labels = history.map(([timestamp]) => extractTime(timestamp));
+  const values = history.map(([, value]) => Number(value));
+
+  chart.data.labels = labels;
+  chart.data.datasets[0].data = values;
+
+  if (values.length > 0) {
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const range = maxValue - minValue;
+    const padding = range > 0 ? range * 0.15 : Math.max(Math.abs(maxValue) * 0.1, 1);
+    chart.options.scales.y.min = minValue - padding;
+    chart.options.scales.y.max = maxValue + padding;
+  } else {
+    chart.options.scales.y.min = undefined;
+    chart.options.scales.y.max = undefined;
+  }
+
   chart.update();
 }
 
@@ -93,30 +109,36 @@ async function getJson(path) {
 }
 
 const soundChart = createChart("sound-chart", "Son (valeur brute)", "#2563eb");
-const humChart = createChart("hum-chart", "Humidité (%)", "#059669");
+const ultrasonicChart = createChart("ultrasonic-chart", "Distance (cm)", "#059669");
 
 async function refreshAll() {
   try {
-    const [soundCurrent, soundAvg, soundHistory, humCurrent, humAvg, humHistory] =
-      await Promise.all([
-        getText("/capteurs/sound"),
-        getText(`/capteurs/sound/${HISTORY_SIZE}/moy`),
-        getJson(`/capteurs/sound/${HISTORY_SIZE}`),
-        getText("/capteurs/hum"),
-        getText(`/capteurs/hum/${HISTORY_SIZE}/moy`),
-        getJson(`/capteurs/hum/${HISTORY_SIZE}`)
-      ]);
+    const [
+      soundCurrent,
+      soundAvg,
+      soundHistory,
+      ultrasonicCurrent,
+      ultrasonicAvg,
+      ultrasonicHistory
+    ] = await Promise.all([
+      getText("/capteurs/sound"),
+      getText(`/capteurs/sound/${HISTORY_SIZE}/moy`),
+      getJson(`/capteurs/sound/${HISTORY_SIZE}`),
+      getText("/capteurs/ultrasonic"),
+      getText(`/capteurs/ultrasonic/${HISTORY_SIZE}/moy`),
+      getJson(`/capteurs/ultrasonic/${HISTORY_SIZE}`)
+    ]);
 
     soundCurrentEl.textContent = soundCurrent;
     soundAvgEl.textContent = soundAvg;
-    humCurrentEl.textContent = humCurrent;
-    humAvgEl.textContent = humAvg;
+    ultrasonicCurrentEl.textContent = `${ultrasonicCurrent} cm`;
+    ultrasonicAvgEl.textContent = `${ultrasonicAvg} cm`;
 
     renderTable(soundHistoryBody, soundHistory, "");
-    renderTable(humHistoryBody, humHistory, " %");
+    renderTable(ultrasonicHistoryBody, ultrasonicHistory, " cm");
 
     updateChart(soundChart, soundHistory);
-    updateChart(humChart, humHistory);
+    updateChart(ultrasonicChart, ultrasonicHistory);
     setStatusOk();
   } catch (err) {
     setStatusError(err.message);
