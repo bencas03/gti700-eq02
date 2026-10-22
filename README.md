@@ -68,21 +68,14 @@ cd frontend
 npm install
 ```
 
-Configurer l'URL du backend:
-- `BACKEND_BASE_URL` (défaut: `http://localhost:8080`)
+Configurer le frontend via le fichier `.env` dans `frontend/`:
 
-Exemple (Linux/macOS):
-
-```bash
-BACKEND_BASE_URL=http://192.168.1.50:8080 npm start
+```env
+BACKEND_BASE_URL=http://192.168.1.50:8080
+PORT=8889
 ```
 
-Exemple (Windows PowerShell):
-
-```powershell
-$env:BACKEND_BASE_URL="http://192.168.1.50:8080"
-npm start
-```
+`BACKEND_BASE_URL` pointe vers la machine A (backend).
 
 Le frontend écoute sur `http://<ip_machine_b>:8889/affichage`.
 
