@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Affichage capteurs</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Affichage météo (température et humidité)</h1>
+      <p id="status" class="status ok">Connexion OK</p>
+
+      <div class="columns">
+        <section class="card">
+          <h2>Température</h2>
+          <p><strong>Valeur actuelle:</strong> <span id="temp-current">--</span></p>
+          <p><strong>Moyenne (30):</strong> <span id="temp-avg">--</span></p>
+          <canvas id="temp-chart"></canvas>
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Valeur</th>
+              </tr>
+            </thead>
+            <tbody id="temp-history"></tbody>
+          </table>
+        </section>
+
+        <section class="card">
+          <h2>Humidité</h2>
+          <p><strong>Valeur actuelle:</strong> <span id="hum-current">--</span></p>
+          <p><strong>Moyenne (30):</strong> <span id="hum-avg">--</span></p>
+          <canvas id="hum-chart"></canvas>
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Valeur</th>
+              </tr>
+            </thead>
+            <tbody id="hum-history"></tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+
+    <script src="/config.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
