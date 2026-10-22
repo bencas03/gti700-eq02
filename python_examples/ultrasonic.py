@@ -33,9 +33,8 @@ def distance():
 def loop():
 	while True:
 		dis = distance()
-		print (dis, 'cm')
-		print ('')
-		time.sleep(0.3)
+		print (dis, 'cm', flush=True)
+		time.sleep(1)
 
 def destroy():
 	GPIO.cleanup()

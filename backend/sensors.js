@@ -55,7 +55,11 @@ class SensorStore {
 
 function startSensorProcess({ scriptPath, parser, store, pythonCmd }) {
   const resolvedScript = path.resolve(scriptPath);
-  const child = spawn(pythonCmd, [resolvedScript], {
+  const child = spawn(pythonCmd, ["-u", resolvedScript], {
+    env: {
+      ...process.env,
+      PYTHONUNBUFFERED: "1"
+    },
     stdio: ["ignore", "pipe", "pipe"]
   });
 

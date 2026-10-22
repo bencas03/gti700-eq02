@@ -1,6 +1,6 @@
 const API_BASE = window.APP_CONFIG?.BACKEND_BASE_URL || "http://localhost:8080";
 const HISTORY_SIZE = 30;
-const REFRESH_MS = 300;
+const REFRESH_MS = 1000;
 
 const statusEl = document.getElementById("status");
 const soundCurrentEl = document.getElementById("sound-current");

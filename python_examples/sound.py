@@ -13,11 +13,11 @@ def loop():
 	while True:
 		voiceValue = ADC.read(0)
 		if voiceValue:
-			print ("Value:", voiceValue)
+			print ("Value:", voiceValue, flush=True)
 			if voiceValue < 50:
-				print ("Voice In!! ", count)
+				print ("Voice In!! ", count, flush=True)
 				count += 1
-			time.sleep(0.2)
+		time.sleep(1)
 
 if __name__ == '__main__':
 	try:
