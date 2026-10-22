@@ -84,4 +84,3 @@ Le frontend écoute sur `http://<ip_machine_b>:8889/affichage`.
 - Les scripts capteurs produisent une mesure par seconde.
 - Le frontend rafraîchit toutes les 1 seconde pour mettre à jour le graphique à chaque nouvelle mesure.
 - En cas d'erreur réseau/backend, un message d'erreur est affiché et les tentatives continuent.
-- Librairie graphique utilisée: Chart.js (CDN officiel: https://www.chartjs.org/).
