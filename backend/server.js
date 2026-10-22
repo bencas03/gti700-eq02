@@ -3,7 +3,7 @@ const express = require("express");
 const {
   SensorStore,
   startSensorProcess,
-  parseTemperature,
+  parseSound,
   parseHumidity
 } = require("./sensors");
 
@@ -11,19 +11,19 @@ const app = express();
 const port = Number(process.env.PORT || 8080);
 const maxHistory = Number(process.env.MAX_HISTORY || 720);
 const pythonCmd = process.env.PYTHON_CMD || "python3";
-const tempScript =
-  process.env.TEMP_SCRIPT || path.join(__dirname, "..", "python_examples", "thermistor.py");
+const soundScript =
+  process.env.SOUND_SCRIPT || path.join(__dirname, "..", "python_examples", "sound.py");
 const humScript =
   process.env.HUM_SCRIPT || path.join(__dirname, "..", "python_examples", "humid.py");
 
-const tempStore = new SensorStore("temp", maxHistory);
+const soundStore = new SensorStore("sound", maxHistory);
 const humStore = new SensorStore("hum", maxHistory);
 
 const processes = [
   startSensorProcess({
-    scriptPath: tempScript,
-    parser: parseTemperature,
-    store: tempStore,
+    scriptPath: soundScript,
+    parser: parseSound,
+    store: soundStore,
     pythonCmd
   }),
   startSensorProcess({
@@ -75,24 +75,24 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/capteurs/temp", (req, res) => {
-  sendLatest(res, tempStore, false);
+app.get("/capteurs/sound", (req, res) => {
+  sendLatest(res, soundStore, false);
 });
 
-app.get("/capteurs/temp/:n", (req, res) => {
+app.get("/capteurs/sound/:n", (req, res) => {
   const n = parseN(req, res);
   if (n === null) {
     return;
   }
-  sendHistory(res, tempStore, n);
+  sendHistory(res, soundStore, n);
 });
 
-app.get("/capteurs/temp/:n/moy", (req, res) => {
+app.get("/capteurs/sound/:n/moy", (req, res) => {
   const n = parseN(req, res);
   if (n === null) {
     return;
   }
-  sendAverage(res, tempStore, n, false);
+  sendAverage(res, soundStore, n, false);
 });
 
 app.get("/capteurs/hum", (req, res) => {
@@ -118,7 +118,7 @@ app.get("/capteurs/hum/:n/moy", (req, res) => {
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
-    temperatureSamples: tempStore.values.length,
+    soundSamples: soundStore.values.length,
     humiditySamples: humStore.values.length
   });
 });

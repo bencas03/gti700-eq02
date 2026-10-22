@@ -84,8 +84,8 @@ function startSensorProcess({ scriptPath, parser, store, pythonCmd }) {
   return child;
 }
 
-function parseTemperature(line) {
-  const match = line.match(/temperature\s*=\s*([+-]?\d+(?:\.\d+)?)/i);
+function parseSound(line) {
+  const match = line.match(/Value:\s*([+-]?\d+(?:\.\d+)?)/i);
   if (!match) {
     return null;
   }
@@ -103,6 +103,6 @@ function parseHumidity(line) {
 module.exports = {
   SensorStore,
   startSensorProcess,
-  parseTemperature,
+  parseSound,
   parseHumidity
 };

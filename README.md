@@ -22,7 +22,7 @@ Implémentation simple séparée en deux dossiers:
 - Python 3
 - Dépendances capteurs Python installées (RPi.GPIO, etc.)
 - Les scripts Python présents dans `python_examples/`:
-  - `thermistor.py` (température)
+  - `sound.py` (son)
   - `humid.py` (humidité)
 
 ### Machine B (frontend, Raspberry Pi B / ordinateur B)
@@ -41,7 +41,7 @@ npm install
 Variables optionnelles:
 - `PORT` (défaut: `8080`)
 - `PYTHON_CMD` (défaut: `python3`)
-- `TEMP_SCRIPT` (défaut: `../python_examples/thermistor.py`)
+- `SOUND_SCRIPT` (défaut: `../python_examples/sound.py`)
 - `HUM_SCRIPT` (défaut: `../python_examples/humid.py`)
 - `MAX_HISTORY` (défaut: `720`)
 
@@ -52,9 +52,9 @@ npm start
 ```
 
 API disponible sur `http://<ip_machine_a>:8080`:
-- `GET /capteurs/temp`
-- `GET /capteurs/temp/:n`
-- `GET /capteurs/temp/:n/moy`
+- `GET /capteurs/sound`
+- `GET /capteurs/sound/:n`
+- `GET /capteurs/sound/:n/moy`
 - `GET /capteurs/hum`
 - `GET /capteurs/hum/:n`
 - `GET /capteurs/hum/:n/moy`

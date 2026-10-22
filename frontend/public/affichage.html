@@ -9,15 +9,15 @@
   </head>
   <body>
     <main>
-      <h1>Affichage météo (température et humidité)</h1>
+      <h1>Affichage capteurs (son et humidité)</h1>
       <p id="status" class="status ok">Connexion OK</p>
 
       <div class="columns">
         <section class="card">
-          <h2>Température</h2>
-          <p><strong>Valeur actuelle:</strong> <span id="temp-current">--</span></p>
-          <p><strong>Moyenne (30):</strong> <span id="temp-avg">--</span></p>
-          <canvas id="temp-chart"></canvas>
+          <h2>Son</h2>
+          <p><strong>Valeur actuelle:</strong> <span id="sound-current">--</span></p>
+          <p><strong>Moyenne (30):</strong> <span id="sound-avg">--</span></p>
+          <canvas id="sound-chart"></canvas>
           <table>
             <thead>
               <tr>
@@ -25,7 +25,7 @@
                 <th>Valeur</th>
               </tr>
             </thead>
-            <tbody id="temp-history"></tbody>
+            <tbody id="sound-history"></tbody>
           </table>
         </section>
 

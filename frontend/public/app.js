@@ -3,11 +3,11 @@ const HISTORY_SIZE = 30;
 const REFRESH_MS = 3000;
 
 const statusEl = document.getElementById("status");
-const tempCurrentEl = document.getElementById("temp-current");
-const tempAvgEl = document.getElementById("temp-avg");
+const soundCurrentEl = document.getElementById("sound-current");
+const soundAvgEl = document.getElementById("sound-avg");
 const humCurrentEl = document.getElementById("hum-current");
 const humAvgEl = document.getElementById("hum-avg");
-const tempHistoryBody = document.getElementById("temp-history");
+const soundHistoryBody = document.getElementById("sound-history");
 const humHistoryBody = document.getElementById("hum-history");
 
 function extractTime(timestamp) {
@@ -92,30 +92,30 @@ async function getJson(path) {
   return response.json();
 }
 
-const tempChart = createChart("temp-chart", "Température (°C)", "#2563eb");
+const soundChart = createChart("sound-chart", "Son (valeur brute)", "#2563eb");
 const humChart = createChart("hum-chart", "Humidité (%)", "#059669");
 
 async function refreshAll() {
   try {
-    const [tempCurrent, tempAvg, tempHistory, humCurrent, humAvg, humHistory] =
+    const [soundCurrent, soundAvg, soundHistory, humCurrent, humAvg, humHistory] =
       await Promise.all([
-        getText("/capteurs/temp"),
-        getText(`/capteurs/temp/${HISTORY_SIZE}/moy`),
-        getJson(`/capteurs/temp/${HISTORY_SIZE}`),
+        getText("/capteurs/sound"),
+        getText(`/capteurs/sound/${HISTORY_SIZE}/moy`),
+        getJson(`/capteurs/sound/${HISTORY_SIZE}`),
         getText("/capteurs/hum"),
         getText(`/capteurs/hum/${HISTORY_SIZE}/moy`),
         getJson(`/capteurs/hum/${HISTORY_SIZE}`)
       ]);
 
-    tempCurrentEl.textContent = `${tempCurrent} °C`;
-    tempAvgEl.textContent = `${tempAvg} °C`;
+    soundCurrentEl.textContent = soundCurrent;
+    soundAvgEl.textContent = soundAvg;
     humCurrentEl.textContent = humCurrent;
     humAvgEl.textContent = humAvg;
 
-    renderTable(tempHistoryBody, tempHistory, " °C");
+    renderTable(soundHistoryBody, soundHistory, "");
     renderTable(humHistoryBody, humHistory, " %");
 
-    updateChart(tempChart, tempHistory);
+    updateChart(soundChart, soundHistory);
     updateChart(humChart, humHistory);
     setStatusOk();
   } catch (err) {
